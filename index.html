@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <title>CivicPulse</title>
+        <link rel="stylesheet" href="style.css" />
+    </head>
+    <body>
+
+        <header>
+            <div class="logo">CivicPulse</div>
+            <p class="tagline">Local government, made understandable.</p>
+        </header>
+
+        <main>
+            <div class="search-card">
+                <h1>Who represents you?</h1>
+                <p>Enter your Chicago Zicode to see your local government.</p>
+
+                <div class="search-row">
+                    <input
+                        type="text"
+                        id="zipcode-input"
+                        placeholder="e.g. 60614"
+                        maxlength="5"
+                    />
+                    <button id="search-btn">Look up</button>
+                </div>
+                <p id="error-msg" class="error hidden">
+                    Please enter a valid 5-digit Chicago zipcode.
+                </p>
+            </div>
+            <div id="results-section" class="hidden">
+                <h2>Your representatives</h2>
+                <p class="coming-soon">
+                    Live data coming in phase 2. For now - the pipeline is built and ready.
+                </p>
+            </div>
+        </main>
+        <footer>
+            <p>
+                CivicPulse aggregates public data. We do not create it.
+            </p>
+        </footer>
+        <script src="script.js"></script>
+    </body>
+</html>
