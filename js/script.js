@@ -15,7 +15,7 @@ document.addEventListener("DOMContentLoaded", function () {
     "60653","60654","60655","60656","60657","60659","60660","60661"
   ];
 
-  // fetch real representative data from our Netlify function
+  // fetch representatives from our Netlify function
   async function fetchRepresentatives(zip) {
     const response = await fetch(`/.netlify/functions/representatives?zip=${zip}`);
     if (!response.ok) {
@@ -24,51 +24,47 @@ document.addEventListener("DOMContentLoaded", function () {
     return response.json();
   }
 
-  // build and inject the representative cards into the page
+  // build and inject representative cards into the page
   function renderRepresentatives(data) {
-    const container = document.getElementById("results-section");
+    const results = data.results;
 
-    // map each official to their office title
-    const officials = data.officials.map((official, index) => {
-      const office = data.offices.find(
-        (o) => o.officialIndices && o.officialIndices.includes(index)
-      );
-      return {
-        name: official.name,
-        office: office ? office.name : "Unknown Office",
-        party: official.party || "N/A",
-        photo: official.photoUrl || null,
-        website: official.urls ? official.urls[0] : null,
-        phone: official.phones ? official.phones[0] : null,
-      };
-    });
+    if (!results || results.length === 0) {
+      resultsSection.innerHTML = "<p>No representatives found for this zip code.</p>";
+      return;
+    }
 
-    // build the HTML cards
-    container.innerHTML = officials
-      .map(
-        (rep) => `
-        <div class="rep-card">
-          ${rep.photo ? `<img src="${rep.photo}" alt="${rep.name}" class="rep-photo"/>` : ""}
-          <div class="rep-info">
-            <h3 class="rep-name">${rep.name}</h3>
-            <p class="rep-office">${rep.office}</p>
-            <p class="rep-party">${rep.party}</p>
-            ${rep.phone ? `<p class="rep-phone">${rep.phone}</p>` : ""}
-            ${rep.website ? `<a href="${rep.website}" target="_blank" class="rep-link">Official Website</a>` : ""}
+    resultsSection.innerHTML = results
+      .map((rep) => {
+        const role = rep.current_role;
+        const office = role
+          ? `${role.title} — ${role.org_name}`
+          : "Office unknown";
+        const party = rep.party || "N/A";
+        const email = rep.email || null;
+        const links = rep.links && rep.links.length > 0 ? rep.links[0].url : null;
+
+        return `
+          <div class="rep-card">
+            <div class="rep-info">
+              <h3 class="rep-name">${rep.name}</h3>
+              <p class="rep-office">${office}</p>
+              <p class="rep-party">${party}</p>
+              ${email ? `<p class="rep-email">${email}</p>` : ""}
+              ${links ? `<a href="${links}" target="_blank" class="rep-link">Official Website</a>` : ""}
+            </div>
           </div>
-        </div>
-      `
-      )
+        `;
+      })
       .join("");
 
-    container.classList.remove("hidden");
+    resultsSection.classList.remove("hidden");
   }
 
   // main function that runs when someone clicks Look Up
   async function handleSearch() {
     const zip = zipcodeInput.value.trim();
 
-    // hide any previous error or results
+    // hide any previous errors or results
     errorMsg.classList.add("hidden");
     resultsSection.classList.add("hidden");
 
@@ -78,7 +74,7 @@ document.addEventListener("DOMContentLoaded", function () {
       return;
     }
 
-    // show a loading state while we fetch
+    // show loading state
     resultsSection.classList.remove("hidden");
     resultsSection.innerHTML = "<p>Loading your representatives...</p>";
 
