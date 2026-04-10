@@ -1,3 +1,4 @@
+const OPENSTATES_API_KEY = process.env.OPENSTATES_API_KEY;
 exports.handler = async function (event) {
     const zip = event.queryStringParameters.zip;
 
@@ -8,9 +9,8 @@ exports.handler = async function (event) {
         };
     }
 
-    const apiKey = ProcessingInstruction.env.OPENSTATES_API_KEY;
 
-    if (!apiKey) {
+    if (!OPENSTATES_API_KEY) {
         return {
             statusCode: 500,
             body: JSON.stringify({ error: "API key not configured"}),
@@ -31,7 +31,7 @@ exports.handler = async function (event) {
         const lng = geoData.places[0].longitude;
 
         //step 2: pass lat/lng to OpenStates
-        const url = 'https//v3.openstates.org/people.geo?lat=${lat}&lng=${lng}&apikey=${apiKey}';
+        const url = 'https//v3.openstates.org/people.geo?lat=${lat}&lng=${lng}&apikey=${OPENSTATES_API_KEY}';
         const response = await fetch(url);
         const data = await response.json();
 
