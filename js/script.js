@@ -36,8 +36,11 @@ document.addEventListener("DOMContentLoaded", function () {
     resultsSection.innerHTML = results
       .map((rep) => {
         const role = rep.current_role;
+        const chamberLabel = role?.org_classification === "upper" ? "Senate"
+            : role?.org_classification === "lower" ? "House"
+            : role?.org_classification || "";
         const office = role
-          ? `${role.title} — ${role.org_name}`
+          ? `${role.title}${chamberLabel ? " - " + chamberLabel : ""}`
           : "Office unknown";
         const party = rep.party || "N/A";
         const email = rep.email || null;
