@@ -34,7 +34,7 @@ document.addEventListener("DOMContentLoaded", function () {
     }
 
     resultsSection.innerHTML = results
-      .map((rep) => {
+      .map((rep, index) => {
         const role = rep.current_role;
         const chamberLabel = role?.org_classification === "upper" ? "Senate"
             : role?.org_classification === "lower" ? "House"
