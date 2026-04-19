@@ -140,7 +140,9 @@ document.addEventListener("DOMContentLoaded", function () {
         const data = await repsonse.json();
 
         //display the summary and update the button
-        summaryBox.textContent = data.summary;
+        summaryBox.innerHTML = data.summary
+            .replace(/^#\s(.+)$/m, "<strong>$1</strong><br><br>")
+            .replace(/\n/g, "<br>");
         button.textContent = "✅ AI Summary loaded";
     } catch (err) {
         summaryBox.textContent = "Sorry, couldnt load a summary right now. Please try again.";
