@@ -47,15 +47,28 @@ document.addEventListener("DOMContentLoaded", function () {
         const links = rep.links && rep.links.length > 0 ? rep.links[0].url : null;
 
         return `
-          <div class="rep-card">
-            <div class="rep-info">
-              <h3 class="rep-name">${rep.name}</h3>
-              <p class="rep-office">${office}</p>
-              <p class="rep-party">${party}</p>
-              ${email ? `<p class="rep-email">${email}</p>` : ""}
-              ${links ? `<a href="${links}" target="_blank" class="rep-link">Official Website</a>` : ""}
+            <div class="rep-card" id="card-${index}">
+                <div class="rep-info">
+                    <h3 class="rep-name">${rep.name}</h3>
+                    <p class="rep-office">${office}</p>
+                    <p class="rep-party">${party}</p>
+                    ${email ? `<p class="rep-email">${email}</p>`: ""}
+                    ${link ? `<a href="${links}" target="_blank" class="rep-link">Official Website</a>` : ""}
+                </div>
+                <div class="rep-ai-section">
+                    <button
+                        class="ai-suammry-btn"
+                        data-name="${rep.name}"
+                        data-role"${role?.title || ""}"
+                        data-party="${party}"
+                        data-index="${index}"
+                        onclick="getAISummary(this)"
+                    >
+                        🤖 Get AI Summary
+                    </button>
+                    <div class="ai-summary-text hidden" id="summary-${index}"></div>
+                </div>
             </div>
-          </div>
         `;
       })
       .join("");
@@ -99,4 +112,44 @@ document.addEventListener("DOMContentLoaded", function () {
       handleSearch();
     }
   });
+
+  //AI Summary function - called when user clicks the button on a rep card
+  async function getAISummary(button) {
+    const name = button.getAttribute("data-name");
+    const role = button.getAttribute("data-role");
+    const party = button.getAttribute("data-party");
+    const index = button.getAttribute("data-index");
+
+    const summaryBox = document.getElementById(`summary-${index}`);
+
+    //show loading state immediately so user knows something is happening
+    button.disabled = true;
+    button.textContent = "⏳ Loading summary...";
+    summaryBox.classList.remove("hidden");
+    summaryBox.textContent = "";
+
+    try {
+        const repsonse = await fetch(
+            `/.netlify/function/ai-summary?name=${encodeURIComponent(name)}&role=${encodeURIComponent(role)}&party=${encodeURIComponent(party)}`
+        );
+
+        if (!repsonse.ok) {
+            throw new Error("Function returned an error");
+        }
+
+        const data = await repsonse.json();
+
+        //display the summary and update the button
+        summaryBox.textContent = data.summary;
+        button.textContent = "✅ AI Summary loaded";
+    } catch (err) {
+        summaryBox.textContent = "Sorry, couldnt load a summary right now. Please try again.";
+        button.textContent = "🤖 Get AI Summary";
+        button.disabled = false;
+        console.error("AI summary error:", err);
+    }
+  }
+
+  //expose to global scope so the oncick in the card HTML can reach it
+  window.getAISummary = getAISummary;
 });
