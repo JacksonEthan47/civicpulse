@@ -53,7 +53,7 @@ document.addEventListener("DOMContentLoaded", function () {
                     <p class="rep-office">${office}</p>
                     <p class="rep-party">${party}</p>
                     ${email ? `<p class="rep-email">${email}</p>`: ""}
-                    ${link ? `<a href="${links}" target="_blank" class="rep-link">Official Website</a>` : ""}
+                    ${links ? `<a href="${links}" target="_blank" class="rep-link">Official Website</a>` : ""}
                 </div>
                 <div class="rep-ai-section">
                     <button
