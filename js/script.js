@@ -59,7 +59,7 @@ document.addEventListener("DOMContentLoaded", function () {
                     <button
                         class="ai-suammry-btn"
                         data-name="${rep.name}"
-                        data-role"${role?.title || ""}"
+                        data-role="${role && role.title ? role.title : "Official"}"
                         data-party="${party}"
                         data-index="${index}"
                         onclick="getAISummary(this)"
@@ -130,7 +130,7 @@ document.addEventListener("DOMContentLoaded", function () {
 
     try {
         const repsonse = await fetch(
-            `/.netlify/function/ai-summary?name=${encodeURIComponent(name)}&role=${encodeURIComponent(role)}&party=${encodeURIComponent(party)}`
+            `/.netlify/functions/ai-summary?name=${encodeURIComponent(name)}&role=${encodeURIComponent(role)}&party=${encodeURIComponent(party)}`
         );
 
         if (!repsonse.ok) {
