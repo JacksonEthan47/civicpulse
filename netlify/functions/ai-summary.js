@@ -1,8 +1,5 @@
 exports.handler = async function (event) {
-    //only allow GET requests
-    if (event.httpMthod != "GET") {
-        return { statusCode: 405, body: "Mehtod Not Allowed"};
-    }
+    //handler accepts GET requests from the frontend
 
     const { name, role, party } = event.queryStringParameters || {};
 
